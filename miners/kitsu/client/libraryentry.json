@@ -1,0 +1,80 @@
+{
+    "id": "16180114",
+    "type": "libraryEntries",
+    "links": {
+    "self": "https://kitsu.io/api/edge/library-entries/16180114"
+    },
+    "attributes": {
+    "createdAt": "2017-01-24T21:45:55.024Z",
+    "updatedAt": "2017-08-20T18:19:53.260Z",
+    "status": "current",
+    "progress": 1,
+    "volumesOwned": 0,
+    "reconsuming": false,
+    "reconsumeCount": 0,
+    "notes": null,
+    "private": false,
+    "reactionSkipped": "unskipped",
+    "progressedAt": "2017-01-26T11:40:05.140Z",
+    "startedAt": "2017-08-15T21:18:52.690Z",
+    "finishedAt": null,
+    "rating": "5.0",
+    "ratingTwenty": 20
+    },
+    "relationships": {
+    "user": {
+    "links": {
+    "self": "https://kitsu.io/api/edge/library-entries/16180114/relationships/user",
+    "related": "https://kitsu.io/api/edge/library-entries/16180114/user"
+    }
+    },
+    "anime": {
+    "links": {
+    "self": "https://kitsu.io/api/edge/library-entries/16180114/relationships/anime",
+    "related": "https://kitsu.io/api/edge/library-entries/16180114/anime"
+    }
+    },
+    "manga": {
+    "links": {
+    "self": "https://kitsu.io/api/edge/library-entries/16180114/relationships/manga",
+    "related": "https://kitsu.io/api/edge/library-entries/16180114/manga"
+    }
+    },
+    "drama": {
+    "links": {
+    "self": "https://kitsu.io/api/edge/library-entries/16180114/relationships/drama",
+    "related": "https://kitsu.io/api/edge/library-entries/16180114/drama"
+    }
+    },
+    "review": {
+    "links": {
+    "self": "https://kitsu.io/api/edge/library-entries/16180114/relationships/review",
+    "related": "https://kitsu.io/api/edge/library-entries/16180114/review"
+    }
+    },
+    "mediaReaction": {
+    "links": {
+    "self": "https://kitsu.io/api/edge/library-entries/16180114/relationships/media-reaction",
+    "related": "https://kitsu.io/api/edge/library-entries/16180114/media-reaction"
+    }
+    },
+    "media": {
+    "links": {
+    "self": "https://kitsu.io/api/edge/library-entries/16180114/relationships/media",
+    "related": "https://kitsu.io/api/edge/library-entries/16180114/media"
+    }
+    },
+    "unit": {
+    "links": {
+    "self": "https://kitsu.io/api/edge/library-entries/16180114/relationships/unit",
+    "related": "https://kitsu.io/api/edge/library-entries/16180114/unit"
+    }
+    },
+    "nextUnit": {
+    "links": {
+    "self": "https://kitsu.io/api/edge/library-entries/16180114/relationships/next-unit",
+    "related": "https://kitsu.io/api/edge/library-entries/16180114/next-unit"
+    }
+    }
+    }
+    }

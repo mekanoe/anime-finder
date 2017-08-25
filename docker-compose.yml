@@ -1,0 +1,46 @@
+version: '3'
+
+services: 
+  crdb1:
+    image: cockroachdb/cockroach:v1.0.4
+    command: start --insecure
+    network_mode: bridge
+    volumes:
+      - ./.data/crdb/1:/cockroach/cockroach-data
+    ports:
+      - 8080
+      - 26257
+  
+  crdb2:
+    image: cockroachdb/cockroach:v1.0.4
+    command: start --insecure --join=crdb1
+    network_mode: bridge
+    volumes:
+      - ./.data/crdb/2:/cockroach/cockroach-data
+    links:
+      - crdb1
+
+  crdb3:
+    image: cockroachdb/cockroach:v1.0.4
+    command: start --insecure --join=crdb1
+    network_mode: bridge    
+    volumes:
+      - ./.data/crdb/3:/cockroach/cockroach-data
+    links:
+      - crdb1
+
+  nats:
+    image: nats:1.0.2
+    ports:
+      - 4222
+      - 6222
+      - 8222
+  
+  dgraph:
+    image: dgraph/dgraph:v0.8.1
+    command: dgraph --bindall=true --memory_mb 2048
+    ports:
+      - 8080
+      - 9080
+    volumes:
+      - ./.data/dgraph:/dgraph
