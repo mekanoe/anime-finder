@@ -1,6 +1,6 @@
 #!/bin/bash
 
-read -r -d '' help << HELP
+read -r -d '' help <<HELP
 💖                  💞
 💘 Swiss Army Waifu 💓
 💝                  💕
