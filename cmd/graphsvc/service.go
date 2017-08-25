@@ -7,7 +7,6 @@ import (
 
 	dgraph "github.com/dgraph-io/dgraph/client"
 	"github.com/imdario/mergo"
-	"github.com/kayteh/anime-finder/types"
 	nats "github.com/nats-io/go-nats"
 )
 
@@ -57,13 +56,13 @@ func (s *Service) wrap(h ClientHandler) nats.MsgHandler {
 }
 
 func (s *Service) animeHandler(ctx context.Context) {
-	msg := ctx.Value(CtxMsg).(SvcMsg)
+	// msg := ctx.Value(CtxMsg).(SvcMsg)
 
-	as := make([]types.Anime)
+	// as := make([]types.Anime)
 }
 
 func (s *Service) usersHandler(ctx context.Context) {
-
+	//
 }
 
 func (s *Service) requestHandler(msg *nats.Msg) {
