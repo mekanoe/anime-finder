@@ -81,6 +81,18 @@ type LibraryEntry struct {
 	Type string `json:"type"`
 }
 
+type LibraryEntriesWithAnime struct {
+	Data     []LibraryEntry `json:"data"`
+	Included []Anime        `json:"included"`
+	Links    struct {
+		First string `json:"first"`
+		Last  string `json:"last"`
+	} `json:"links"`
+	Meta struct {
+		Count int `json:"count"`
+	} `json:"meta"`
+}
+
 type AnimeResponse struct {
 	Data Anime `json:"data"`
 }
@@ -358,6 +370,6 @@ type UserRequest struct {
 		Last  string `json:"last"`
 	} `json:"links"`
 	Meta struct {
-		Count int64 `json:"count"`
+		Count int `json:"count"`
 	} `json:"meta"`
 }
