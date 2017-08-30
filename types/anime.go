@@ -30,7 +30,7 @@ mutation {
 	set {
 		_:a{{$id}} <id> "{{$id}}" .
 		_:a{{$id}} <type> "anime" .
-		_:a{{$id}} <identity> "a{{$id}}"
+		_:a{{$id}} <identity> "a{{$id}}" .
 		{{range $k, $v := .Attributes}}
 		_:a{{$id}} <{{$k}}> "{{ strCast $v | js }}" .
 		{{end}}
