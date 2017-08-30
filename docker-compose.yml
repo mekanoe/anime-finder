@@ -2,7 +2,7 @@ version: '3'
 
 services: 
   crdb1:
-    image: cockroachdb/cockroach:v1.0.4
+    image: cockroachdb/cockroach:v1.0.5
     command: start --insecure
     network_mode: bridge
     volumes:
@@ -12,7 +12,7 @@ services:
       - 26257
   
   crdb2:
-    image: cockroachdb/cockroach:v1.0.4
+    image: cockroachdb/cockroach:v1.0.5
     command: start --insecure --join=crdb1
     network_mode: bridge
     volumes:
@@ -21,7 +21,7 @@ services:
       - crdb1
 
   crdb3:
-    image: cockroachdb/cockroach:v1.0.4
+    image: cockroachdb/cockroach:v1.0.5
     command: start --insecure --join=crdb1
     network_mode: bridge    
     volumes:
