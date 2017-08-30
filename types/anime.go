@@ -37,6 +37,16 @@ mutation {
 	}
 }
 `))
+
+	animeSchema = `
+mutation {
+	schema {
+		id: int @index(int) .
+		type: string @index(exact) . 
+		identity: string @index(exact) .
+	}
+}
+`
 )
 
 // WriteMutation to the io.Writer.
