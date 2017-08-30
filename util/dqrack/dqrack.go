@@ -6,7 +6,10 @@
 package dqrack
 
 import (
+	"context"
 	"encoding/json"
+	"fmt"
+	"log"
 	"reflect"
 	"strings"
 
@@ -23,6 +26,7 @@ type Dqrack struct {
 // Qrackable types let us get information out of structs in a non-arbitrary fashion.
 type Qrackable interface {
 	GetName() string
+	GetData() interface{}
 }
 
 func New(dg *dgraph.Dgraph) *Dqrack {
@@ -40,30 +44,64 @@ func (dq *Dqrack) GetNode(v Qrackable) (n dgraph.Node, err error) {
 		return
 	}
 
-	rt := reflect.TypeOf(v)
-	rv := reflect.ValueOf(v)
+	d := v.GetData()
+	// d := v
+
+	rt := reflect.TypeOf(d)
+	qt := reflect.TypeOf(v)
+	rv := reflect.ValueOf(d)
 	fm := dq.Mapper.FieldMap(rv)
+
+	log.Println("node", vName, "of", qt.Name())
+	req := &dgraph.Req{}
 
 	var e dgraph.Edge
 
 	// basic edges
 	// type makes it searchable by the struct name
 	e = n.Edge("_type")
-	e.SetValueString(strings.ToLower(rt.Name()))
-	e.ConnectTo(n)
+	e.SetValueString(strings.ToLower(qt.Name()))
+	err = req.Set(e)
+	if err != nil {
+		return
+	}
 
 	// identity is it's own name, or specific identity.
 	e = n.Edge("_identity")
 	e.SetValueString(vName)
-	e.ConnectTo(n)
+	err = req.Set(e)
+	if err != nil {
+		return
+	}
 
 	for key, rfv := range fm {
+		if rfv.Type().Kind() == reflect.Struct {
+			continue
+		}
+
 		sf, _ := rt.FieldByName(key)
-		skey := sf.Tag.Get("dq")
+		skey := getKeyTag(sf, key)
+
+		if skey == "-" {
+			continue
+		}
+
+		log.Println("in", key, "dq:", skey)
 
 		e = n.Edge(skey)
-		setEdge(e, rfv)
-		e.ConnectTo(n)
+		err = setEdge(&e, rfv)
+		if err != nil {
+			return n, fmt.Errorf("setEdge: %v", err)
+		}
+		err = req.Set(e)
+		if err != nil {
+			return n, fmt.Errorf("set: %v", err)
+		}
+	}
+
+	_, err = dq.Dgraph.Run(context.Background(), req)
+	if err != nil {
+		return n, fmt.Errorf("run: %v", err)
 	}
 
 	return
@@ -71,19 +109,40 @@ func (dq *Dqrack) GetNode(v Qrackable) (n dgraph.Node, err error) {
 
 // setEdge figures out the best edge type for some struct value
 // TODO: forcibly define default with struct tags.
-func setEdge(e dgraph.Edge, v reflect.Value) error {
+func setEdge(e *dgraph.Edge, v reflect.Value) error {
 	switch v.Type().Kind() {
 	case reflect.String:
-		return e.SetValueString(v.String())
+		log.Println("putting string", v.String())
+		val := strings.Replace(v.String(), "\"", "\\\"", -1)
+		return e.SetValueString(val)
 	case reflect.Bool:
+		log.Println("putting bool", v.Bool())
 		return e.SetValueBool(v.Bool())
 	case reflect.Int:
+		log.Println("putting int", v.Int())
 		return e.SetValueInt(v.Int())
 	default:
 		b, err := json.Marshal(v.Interface())
 		if err != nil {
 			return err
 		}
-		return e.SetValueDefault(string(b))
+
+		log.Println("defaulting", string(b))
+		return e.SetValueBytes(b)
 	}
+}
+
+func getKeyTag(sf reflect.StructField, key string) (s string) {
+	s = sf.Tag.Get("dq")
+	if s != "" {
+		return
+	}
+
+	s = sf.Tag.Get("json")
+	if s != "" {
+		s = strings.Split(s, ",")[0]
+		return
+	}
+
+	return key
 }
