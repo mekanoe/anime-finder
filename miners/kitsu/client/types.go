@@ -146,6 +146,14 @@ type Anime struct {
 	ID string `json:"id"`
 }
 
+func (a Anime) GetName() string {
+	return "a" + a.ID
+}
+
+func (a Anime) GetData() interface{} {
+	return a.Attributes
+}
+
 type User struct {
 	Attributes struct {
 		About               string        `json:"about"`
