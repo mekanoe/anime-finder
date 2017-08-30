@@ -2,20 +2,10 @@ package run
 
 import (
 	"context"
-	"os"
 	"testing"
 )
 
-var testS *Service
-
-func TestMain(m *testing.M) {
-	testS = &Service{
-		NATS:   getNATS(),
-		Dgraph: getDG(),
-	}
-
-	os.Exit(m.Run())
-}
+var testS = NewService()
 
 func getTestContext(dat map[string]interface{}) context.Context {
 	return context.WithValue(context.Background(), CtxMsg, SvcMsg{

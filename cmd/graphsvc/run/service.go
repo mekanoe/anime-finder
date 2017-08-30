@@ -9,8 +9,8 @@ import (
 
 	dgraph "github.com/dgraph-io/dgraph/client"
 	"github.com/imdario/mergo"
-	"github.com/kayteh/anime-finder/types"
 	"github.com/kayteh/anime-finder/util"
+	"github.com/kayteh/anime-finder/util/dqrack"
 	nats "github.com/nats-io/go-nats"
 	"google.golang.org/grpc"
 )
@@ -27,13 +27,18 @@ type ClientHandler func(ctx context.Context)
 type Service struct {
 	NATS   *nats.Conn
 	Dgraph *dgraph.Dgraph
+	Dq     *dqrack.Dqrack
 }
 
 func NewService() *Service {
-	return &Service{
+	s := &Service{
 		NATS:   getNATS(),
 		Dgraph: getDG(),
 	}
+
+	s.Dq = dqrack.New(s.Dgraph)
+
+	return s
 }
 
 func getNATS() *nats.Conn {
@@ -99,30 +104,31 @@ func getDGContext() context.Context {
 }
 
 func (s *Service) animeHandler(ctx context.Context) {
-	msg := ctx.Value(CtxMsg).(SvcMsg)
+	return
+	// msg := ctx.Value(CtxMsg).(SvcMsg)
 
-	asTmp := msg.Data["anime"].([]interface{})
+	// asTmp := msg.Data["anime"].([]interface{})
 
-	for _, at := range asTmp {
-		var a types.Anime
-		err := jsonCast(&a, at)
-		if err != nil {
-			log.Println("anime: failed json cast:", err)
-			return
-		}
+	// for _, at := range asTmp {
+	// 	var a types.Anime
+	// 	err := jsonCast(&a, at)
+	// 	if err != nil {
+	// 		log.Println("anime: failed json cast:", err)
+	// 		return
+	// 	}
 
-		buf := bytes.Buffer{}
-		a.WriteMutation(&buf)
+	// 	buf := bytes.Buffer{}
+	// 	a.WriteMutation(&buf)
 
-		r := &dgraph.Req{}
-		r.SetQuery(buf.String())
-		// log.Panicln(buf.String())
-		_, err = s.Dgraph.Run(getDGContext(), r)
-		if err != nil {
-			log.Println("anime: mutation write failed:", err)
-			return
-		}
-	}
+	// 	r := &dgraph.Req{}
+	// 	r.SetQuery(buf.String())
+	// 	// log.Panicln(buf.String())
+	// 	_, err = s.Dgraph.Run(getDGContext(), r)
+	// 	if err != nil {
+	// 		log.Println("anime: mutation write failed:", err)
+	// 		return
+	// 	}
+	// }
 
 }
 

@@ -1,8 +1,6 @@
 package run
 
 import (
-	"bytes"
-	"fmt"
 	"testing"
 
 	"github.com/kayteh/anime-finder/types"
@@ -89,18 +87,16 @@ func TestJsonCast(t *testing.T) {
 	// log.Println(a.Attributes.CanonicalTitle)
 }
 
-func TestAnimeMutation(t *testing.T) {
+func TestAnimeNode(t *testing.T) {
 	var a types.Anime
 	err := jsonCast(&a, testAnime)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	buf := bytes.Buffer{}
-	err = a.WriteMutation(&buf)
+	_, err = testS.Dq.GetNode(a)
 	if err != nil {
-		t.Fatal(err)
+		t.Error(err)
+		return
 	}
-
-	fmt.Println(buf.String())
 }
