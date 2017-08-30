@@ -10,11 +10,12 @@ read -r -d '' help <<HELP
 install
   dep ensures, generates, then builds the project.
 
-env [set|unset]
+env [set|unset|dot] [path]
   set relevant environment variables
   * use like \`eval \$(./tool env)\`
   * ex: eval \$(./tool env)
   * ex: eval \$(./tool env unset)
+  * for dot, if path isn't set, i write to stdout.
 
 ui service
   try to open a service's web ui
@@ -54,6 +55,14 @@ cmd_env_set() {
     (>&2 echo "✅ Environment set.")    
 }
 
+cmd_env_dot() {
+    echo "NATS_ADDR=$(docker-compose port nats 4222)" > $1
+    echo "DGRAPH_ADDR=$(docker-compose port dgraph 9080)" >> $1
+    echo "CRDB_ADDR=$(docker-compose port crdb1 26257)" >> $1
+    
+    (>&2 echo "📝  .env file written")    
+}
+
 cmd_env_unset() {
     SET=export
     SPLIT="="
@@ -79,7 +88,7 @@ cmd_ui() {
 main() {
     case "$1" in
         help) echo "$help";;
-        env) cmd_env_${2:-set};;
+        env) cmd_env_${2:-set} "${3:-/dev/stdout}";;
         ui) cmd_ui $2;;
         install) cmd_install;;
         *) echo "$help";;
