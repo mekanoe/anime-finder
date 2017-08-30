@@ -1,13 +1,45 @@
 package types
 
+import (
+	"encoding/json"
+	"io"
+	"text/template"
+)
+
+// Anime is a kitsu api payload
+// type Anime = kitsuclient.Anime
 type Anime struct {
-	Title  string `json:"title,omitempty"`
-	ID     string `json:"id,omitempty"` // ksuid
-	Poster string `json:"poster,omitempty"`
+	Attributes map[string]interface{} `json:"attributes"`
+	ID         string                 `json:"id"`
+}
 
-	ServiceID struct {
-		Kitsu string `json:"kitsu,omitempty"`
-	} `json:"service_id,omitempty"`
+var (
+	animeMutation = template.Must(template.New("").Funcs(template.FuncMap{
+		"strCast": func(v interface{}) (string, error) {
+			switch v.(type) {
+			case string:
+				return v.(string), nil
+			default:
+				b, err := json.Marshal(v)
+				return string(b), err
+			}
+		},
+	}).Parse(`
+{{$id := .ID}}
+mutation {
+	set {
+		_:a{{$id}} <id> "{{$id}}" .
+		_:a{{$id}} <type> "anime" .
+		_:a{{$id}} <identity> "a{{$id}}"
+		{{range $k, $v := .Attributes}}
+		_:a{{$id}} <{{$k}}> "{{ strCast $v | js }}" .
+		{{end}}
+	}
+}
+`))
+)
 
-	Genres []string `json:"genres,omitempty"`
+// WriteMutation to the io.Writer.
+func (a *Anime) WriteMutation(w io.Writer) error {
+	return animeMutation.Execute(w, a)
 }
